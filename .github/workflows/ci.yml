@@ -42,6 +42,7 @@ jobs:
       - name: Build RPM
         run: |
           sed -i "s/0.0.0/${{ steps.vars.outputs.sha_short }}/g" check_netgear/nagios-plugins-netgear.spec
+          check_netgear/.github/workflows/rpm_changelog.sh check_netgear/CHANGELOG.md check_netgear/nagios-plugins-netgear.spec
           cat check_netgear/nagios-plugins-netgear.spec
           mkdir mock
           docker run --privileged --cap-add=SYS_ADMIN -t --rm -v $PWD/check_netgear:/root/check_netgear -v $PWD/mock:/var/lib/mock mock:latest sh -c "mock -r rocky+epel-${{ matrix.version }}-x86_64 --spec /root/check_netgear/nagios-plugins-netgear.spec --sources /root/check_netgear"
