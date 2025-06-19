@@ -6,6 +6,10 @@ This has currently only been tested with the Netgear switch *GS724TPv3*.
 
 ## Usage
 
+```bash
+check_netgear.py --help
+```
+
 optional arguments:
 
 * **-h, --help**<br>
