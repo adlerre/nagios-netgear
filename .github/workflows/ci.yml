@@ -1,0 +1,53 @@
+name: check_netgear CI
+
+on: [ push, pull_request ]
+
+jobs:
+  #########################################################################################
+  ## Build RPMs
+  #########################################################################################
+  rpm-rocky:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        version: [ 8, 9 ]
+    steps:
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - uses: actions/checkout@v4
+        with:
+          path: check_netgear
+          fetch-depth: 0
+
+      - name: Build Mock Environment
+        uses: docker/build-push-action@v6
+        with:
+          tags: mock:latest
+          file: check_netgear/.github/workflows/Dockerfile
+          context: .
+          pull: true
+          push: false
+          load: true
+
+      - name: Set Variables
+        id: vars
+        run: |
+          pushd .
+          cd check_netgear
+          echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          echo "branch=$(echo ${{ github.ref_name }} | tr / __)" >> $GITHUB_OUTPUT
+          popd
+
+      - name: Build RPM
+        run: |
+          sed -i "s/0.0.0/${{ steps.vars.outputs.sha_short }}/g" check_netgear/nagios-plugins-netgear.spec
+          cat check_netgear/nagios-plugins-netgear.spec
+          mkdir mock
+          docker run --privileged --cap-add=SYS_ADMIN -t --rm -v $PWD/check_netgear:/root/check_netgear -v $PWD/mock:/var/lib/mock mock:latest sh -c "mock -r rocky+epel-${{ matrix.version }}-x86_64 --spec /root/check_netgear/nagios-plugins-netgear.spec --sources /root/check_netgear"
+
+      - name: Upload RPM
+        uses: actions/upload-artifact@v4
+        with:
+          name: nagios-plugins-netgear-rl${{ matrix.version }}-x86_64-rpms
+          path: mock/rocky+epel-${{ matrix.version }}-x86_64/result/nagios-plugins-netgear*.rpm
