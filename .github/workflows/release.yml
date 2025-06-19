@@ -88,7 +88,7 @@ jobs:
           rm -rf package
           mkdir -p package
           rm -rf package/*.zip
-          cp -f mock/rocky+epel-${{ matrix.version }}-x86_64/result/check_netgear*.rpm package/
+          cp -f mock/rocky+epel-${{ matrix.version }}-x86_64/result/nagios-plugins-netgear*.rpm package/
           cd ./package
 
       - name: Upload RPM
