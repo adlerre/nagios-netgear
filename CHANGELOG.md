@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/adlerre/nagios-netgear/compare/v1.0.0...v1.1.0) (2025-06-19)
+
+
+### Features
+
+* add changelog to rpm ([#2](https://github.com/adlerre/nagios-netgear/issues/2)) ([f273d98](https://github.com/adlerre/nagios-netgear/commit/f273d985c93c54ffaaa1228475387e796eef27a1))
+
 # 1.0.0 (2025-06-19)
 
 
